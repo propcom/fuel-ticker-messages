@@ -73,6 +73,16 @@ class Model_Message extends \Orm\Model
 		return ( ! $msg ? false : $msg->get_message() );
 	}
 
+	public static function last_message()
+	{
+		return \Ticker\Model_Message::find("last");
+	}
+
+	public static function notifications($time)
+	{
+		return \Ticker\Model_Message::find()->where("created_at", ">", $time)->count();
+	}
+
 	public function set_default()
 	{
 		// set all entries (default) to 0
