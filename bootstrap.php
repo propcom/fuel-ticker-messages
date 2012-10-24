@@ -10,7 +10,7 @@
 );
 
 $roles = array(
-	'manage_tickers_messages' => array('\TickerMessages\Controller_Manage' => true),
+	'manage_tickers_messages' => array('Ticker\Controller_Manage' => true),
 );
 
 \Auth::acl()->add($roles);
