@@ -80,7 +80,7 @@ class Model_Message extends \Orm\Model
 
 	public static function notifications($time)
 	{
-		return \Ticker\Model_Message::find()->where("created_at", ">", $time)->count();
+		return count(\Ticker\Model_Message::query()->where("created_at", ">", $time)->get());
 	}
 
 	public function set_default()
