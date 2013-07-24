@@ -62,7 +62,7 @@ class Model_Message extends \Orm\Model
 	public static function get_current_message()
 	{
 		// Try to get the "default" message, set by the user
-		$msg = \Ticker\Model_Message::find()
+		$msg = \Ticker\Model_Message::query()
 			->where('default', '=', 1)
 			->get_one();
 
