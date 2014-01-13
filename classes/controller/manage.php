@@ -4,6 +4,15 @@ namespace Ticker;
 
 class Controller_Manage extends \Cms\Controller_Template
 {
+    public function before()
+    {
+        parent::before();
+        \Module::load('media_manager');
+        \Propeller\AssetInjector::add_js('admin/classes.js');
+        \Propeller\AssetInjector::add_css('classes.css');
+        \Media_Manager\Init::run();
+    }
+
 	/**
 	 * Display a list of all messages
 	 */
@@ -110,9 +119,12 @@ class Controller_Manage extends \Cms\Controller_Template
 
 	private function _edit(\Ticker\Model_Message $message)
 	{
-		if(\Input::method() == "POST")
-		{
+        \Propeller\AssetInjector::add_js('chosen.jquery.js');
+        \Propeller\AssetInjector::add_css('chosen/chosen.css');
+
+		if(\Input::method() == "POST"){
 			$message->message = \Input::post("message");
+            $message->image_id 	= \Input::post('image_id', null);
 
 			// only set as default message is checkbox is ticked
 			if(\Input::post("default") == 1) $message->set_default()->save();
@@ -137,6 +149,26 @@ class Controller_Manage extends \Cms\Controller_Template
 		));
 
 		$fieldset->add_model($message, $message)->populate($message);
+
+        $image = $message->image ?: false;
+        $fieldset->add(new \Propeller\Fieldset_Markup_Field(
+            'image',
+            'Add Image',
+            array('value' => \View::forge('manage/single-image')
+                    ->set('image', $image)
+                    ->set('mm_multi', 0)
+                    ->set('media_type', 'class-image')
+                    ->set('mm_field_name', 'image_id')
+                    ->render(),
+                'class' => 'image'
+            )
+        ));
+        $image = false;
+        if($message->image_id)
+        {
+           // $image = \Media_Manager\Model_Image::find($message->image_id);
+        }
+
 
 		// buttons used to save or return back to the the list
 		$buttons = \Fieldset::forge('buttons', array('form_attributes' => array('class' => 'form-actions'), 'field_template' => '{field}'));

@@ -2,6 +2,7 @@
 
 // Dependencies
 \Package::load('admin');
+\Module::load('media_manager');
 \Config::load('cms', true);
 
 \PropNav\Menu::instance('admin')->add_item(

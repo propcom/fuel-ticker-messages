@@ -14,6 +14,9 @@ class Model_Message extends \Orm\Model
 				'type' => \Search\Search::TYPE_INT,
 			)
 		),
+        'image_id' => array(
+            'type' => 'int',
+        ),
 		'message' => array(
 			'type' => 'text',
 			'label' => 'Message',
@@ -47,6 +50,16 @@ class Model_Message extends \Orm\Model
 		),
 	);
 
+    protected static $_belongs_to = array(
+        'image' => array(
+            'key_from' => 'image_id',
+            'model_to' => '\Media_Manager\Model_Image',
+            'key_to' => 'id',
+            'cascade_save' => false,
+            'cascade_delete' => false,
+        )
+    );
+
 	protected static $_observers = array(
 		'Orm\Observer_CreatedAt' => array(
 			'events' => array('before_insert'),
@@ -58,6 +71,20 @@ class Model_Message extends \Orm\Model
 			'events' => array('before_save'),
 		)
 	);
+
+
+    public static function set_form_fields($form, $instance = null)
+    {
+        parent::set_form_fields($form, $instance);
+        if ($instance and $instance instanceof static)
+        {
+
+            $image = $instance->image ?: false;
+
+
+        }
+    }
+
 
 	public static function get_current_message()
 	{
