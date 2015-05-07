@@ -16,6 +16,9 @@ class Model_Message extends \Orm\Model
 		),
         'image_id' => array(
             'type' => 'int',
+            'form' => [
+            	'type' => false
+            ]
         ),
 		'message' => array(
 			'type' => 'text',
