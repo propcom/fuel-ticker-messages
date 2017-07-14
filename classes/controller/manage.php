@@ -80,18 +80,22 @@ class Controller_Manage extends \Cms\Controller_Template
 	{
 		$message = \Ticker\Model_Message::find($id);
 
-		// try to delete the message
-		try
-		{
-			$message->delete();
-			\Session::set_flash("success", "Message deleted");
+		if ($message) {
+			try
+			{
+				$message->delete();
+				\Session::set_flash("success", "Message deleted");
 
-			\Response::redirect(\Uri::create("/admin/ticker/manage"));
+				\Response::redirect(\Uri::create("/admin/ticker/manage"));
+			}
+			catch(\Exception $e)
+			{
+				\Session::set_flash("Unable to delete message");
+			}
 		}
-		catch(\Exception $e)
-		{
-			\Session::set_flash("Unable to delete message");
-		}
+
+		\Session::set_flash('error', 'Message you were trying to delete does not exist');
+		\Response::redirect(\Uri::create("/admin/ticker/manage"));
 	}
 
 	public function action_set_default($id = false)
