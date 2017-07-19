@@ -93,7 +93,7 @@ class Controller_Manage extends \Cms\Controller_Template
 				}
 				catch (\Exception $e) {
 					\Session::set_flash('error', 'Unable to delete message');
-					\Log::error($e->getMessage().PHP_EOL.$e->getTraceAsString(), __METHOD__);
+					\Log::error($e->getMessage().' '.$e->getTraceAsString(), __METHOD__);
 				}
 			}
 			else {
