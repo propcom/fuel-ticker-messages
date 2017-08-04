@@ -79,9 +79,10 @@ class Controller_Manage extends \Cms\Controller_Template
 	public function action_delete($id = false)
 	{
 		$redirect_url = \Uri::create('/admin/ticker/manage');
+		$filter_options = ['options' => ['min_range' => 1]];
 
 		// Check if ID is valid
-		if ($id = (int)$id) {
+		if ($id = filter_var($id, FILTER_VALIDATE_INT, $filter_options)) {
 			// Fetch the ticker message
 			$message = \Ticker\Model_Message::find($id);
 
@@ -92,8 +93,11 @@ class Controller_Manage extends \Cms\Controller_Template
 					\Session::set_flash('success', 'Message deleted');
 				}
 				catch (\Exception $e) {
-					\Session::set_flash('error', 'Unable to delete message');
-					\Log::error($e->getMessage().' '.$e->getTraceAsString(), __METHOD__);
+					\Session::set_flash('error', 'Unable to delete message: '.$e->getMessage());
+					\Log::error(
+						'Unable to delete Ticker message #'.$message->id.': '.$e->getMessage().' [Trace: '.$e->getTraceAsString().']',
+						__METHOD__
+					);
 				}
 			}
 			else {
