@@ -78,20 +78,38 @@ class Controller_Manage extends \Cms\Controller_Template
 	 */
 	public function action_delete($id = false)
 	{
-		$message = \Ticker\Model_Message::find($id);
+		$redirect_url = \Uri::create('/admin/ticker/manage');
+		$filter_options = ['options' => ['min_range' => 1]];
 
-		// try to delete the message
-		try
-		{
-			$message->delete();
-			\Session::set_flash("success", "Message deleted");
+		// Check if ID is valid
+		if ($id = filter_var($id, FILTER_VALIDATE_INT, $filter_options)) {
+			// Fetch the ticker message
+			$message = \Ticker\Model_Message::find($id);
 
-			\Response::redirect(\Uri::create("/admin/ticker/manage"));
+			// Check if message is existent (not null)
+			if ($message) {
+				try {
+					$message->delete();
+					\Session::set_flash('success', 'Message deleted');
+				}
+				catch (\Exception $e) {
+					\Session::set_flash('error', 'Unable to delete message: '.$e->getMessage());
+					\Log::error(
+						'Unable to delete Ticker message #'.$message->id.': '.$e->getMessage().' [Trace: '.$e->getTraceAsString().']',
+						__METHOD__
+					);
+				}
+			}
+			else {
+				\Session::set_flash('error', 'Message you were trying to delete does not exist');
+			}
 		}
-		catch(\Exception $e)
-		{
-			\Session::set_flash("Unable to delete message");
+		else {
+			\Session::set_flash('error', 'Invalid ticker message ID');
 		}
+
+		// We don't want anyone to stay in delete page as it doesn't have any content
+		\Response::redirect($redirect_url);
 	}
 
 	public function action_set_default($id = false)
